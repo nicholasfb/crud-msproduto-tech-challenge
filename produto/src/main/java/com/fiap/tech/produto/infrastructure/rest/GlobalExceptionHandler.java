@@ -1,5 +1,7 @@
-package com.fiap.tech.produto.core.exception;
+package com.fiap.tech.produto.infrastructure.rest;
 
+import com.fiap.tech.produto.core.exception.ResourceNotFoundException;
+import com.fiap.tech.produto.core.exception.UnprocessableEntityException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -13,7 +15,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(ResourceNotFoundException.class)
 	public ResponseEntity<ErrorDetails> handleResourceNotFoundException(ResourceNotFoundException ex,
-			WebRequest request) {
+																		WebRequest request) {
 		ErrorDetails errorDetails = ErrorDetails.builder()
 			.timestamp(LocalDateTime.now())
 			.status(HttpStatus.NOT_FOUND.value())

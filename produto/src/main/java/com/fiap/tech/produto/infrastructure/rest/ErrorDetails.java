@@ -1,4 +1,4 @@
-package com.fiap.tech.produto.core.exception;
+package com.fiap.tech.produto.infrastructure.rest;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
