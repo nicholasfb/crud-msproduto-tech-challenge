@@ -1,11 +1,10 @@
 package com.fiap.tech.produto.useCase;
 
-import com.fiap.tech.produto.domain.exception.BusinessException;
-import com.fiap.tech.produto.domain.mappers.ProductMapper;
-import com.fiap.tech.produto.domain.model.Product;
-import com.fiap.tech.produto.domain.useCase.UpdateProductUseCase;
-import com.fiap.tech.produto.infra.entity.ProductEntity;
-import com.fiap.tech.produto.infra.repository.ProductRepository;
+import com.fiap.tech.produto.core.exception.UnprocessableEntityException;
+import com.fiap.tech.produto.core.repository.ProductRepository;
+import com.fiap.tech.produto.domain.product.Product;
+import com.fiap.tech.produto.product.useCase.UpdateProductUseCaseImpl;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -14,30 +13,32 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class UpdateProductUseCaseTest {
 
     @Mock
     private ProductRepository productRepository;
 
-    @Mock
-    private ProductMapper productMapper;
-
     @InjectMocks
-    private UpdateProductUseCase updateProductUseCase;
+    private UpdateProductUseCaseImpl updateProductUseCase;
 
     private Product updatedProductDomain;
-    private ProductEntity existingProductEntity;
-    private ProductEntity updatedProductEntity;
+
+    private Product existingProduct;
+
+    private Product updatedProduct;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        existingProductEntity = ProductEntity.builder()
+        existingProduct = Product.builder()
                 .id(1L)
                 .description("Produto Exemplo1 Existente")
                 .quantity(42)
@@ -57,7 +58,7 @@ class UpdateProductUseCaseTest {
                 .lastPurchasePrice(84.44)
                 .build();
 
-        updatedProductEntity = ProductEntity.builder()
+        updatedProduct = Product.builder()
                 .id(1L)
                 .description("Produto Exemplo1 Atualizado")
                 .quantity(84)
@@ -71,31 +72,29 @@ class UpdateProductUseCaseTest {
 
     @Test
     void shouldUpdateProductSuccessfully() {
-    when(productRepository.findById(1L)).thenReturn(Optional.of(existingProductEntity));
-    when(productMapper.update(updatedProductDomain,existingProductEntity)).thenReturn(updatedProductEntity);
-    when(productRepository.save(updatedProductEntity)).thenReturn(updatedProductEntity);
-    when(productMapper.toDomain(updatedProductEntity)).thenReturn(updatedProductDomain);
+        when(productRepository.findById(1L)).thenReturn(Optional.of(existingProduct));
+        when(productRepository.save(any(Product.class))).thenReturn(updatedProduct);
 
     Product result = updateProductUseCase.execute(1L, updatedProductDomain);
 
-    assertEquals(updatedProductDomain.getId(), result.getId());
+        Assertions.assertEquals(updatedProductDomain.getId(), result.getId());
 
     verify(productRepository, times(1)).findById(1L);
-    verify(productMapper, times(1)).update(updatedProductDomain, existingProductEntity);
-    verify(productRepository, times(1)).save(updatedProductEntity);
+        verify(productRepository, times(1)).save(any(Product.class));
     }
 
     @Test
     void shouldThrowExceptionWhenProductIdNotFound(){
         when(productRepository.findById(1L)).thenReturn(Optional.empty());
 
-        BusinessException exception = assertThrows(BusinessException.class,
+        UnprocessableEntityException exception = assertThrows(
+                UnprocessableEntityException.class,
                 () -> updateProductUseCase.execute(1L, updatedProductDomain));
 
-        assertEquals("Erro ao atualizar um produto. Produto não encontrado", exception.getMessage());
+        Assertions.assertEquals(
+                "Erro ao atualizar um produto. Produto não encontrado", exception.getMessage());
 
         verify(productRepository).findById(1L);
-        verify(productRepository, never()).save(any(ProductEntity.class));
-        verify(productMapper, never()).toDomain(any(ProductEntity.class));
+        verify(productRepository, never()).save(any(Product.class));
     }
 }

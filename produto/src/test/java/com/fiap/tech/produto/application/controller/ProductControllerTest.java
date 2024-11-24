@@ -1,24 +1,24 @@
 package com.fiap.tech.produto.application.controller;
 
-import com.fiap.tech.produto.application.dto.ProductRequestDTO;
-import com.fiap.tech.produto.application.dto.ProductResponseDTO;
-import com.fiap.tech.produto.domain.mappers.ProductMapper;
-import com.fiap.tech.produto.domain.model.Product;
-import com.fiap.tech.produto.domain.useCase.CreateProductUseCase;
-import com.fiap.tech.produto.domain.useCase.DeleteProductByIdUseCase;
-import com.fiap.tech.produto.domain.useCase.FindProductUseCase;
-import com.fiap.tech.produto.domain.useCase.UpdateProductUseCase;
+import com.fiap.tech.produto.domain.product.Product;
+import com.fiap.tech.produto.mock.ProductDTOMock;
+import com.fiap.tech.produto.mock.ProductMock;
+import com.fiap.tech.produto.product.controller.ProductController;
+import com.fiap.tech.produto.product.dto.ProductDTO;
+import com.fiap.tech.produto.product.useCase.CreateProductUseCaseImpl;
+import com.fiap.tech.produto.product.useCase.DeleteProductByIdUseCaseImpl;
+import com.fiap.tech.produto.product.useCase.FindProductUseCaseImpl;
+import com.fiap.tech.produto.product.useCase.UpdateProductUseCaseImpl;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
@@ -27,25 +27,22 @@ import static org.mockito.Mockito.when;
 public class ProductControllerTest {
 
     @Mock
-    private CreateProductUseCase createProductUseCase;
+    private CreateProductUseCaseImpl createProductUseCase;
 
     @Mock
-    private FindProductUseCase findProductUseCase;
+    private FindProductUseCaseImpl findProductUseCase;
 
     @Mock
-    private UpdateProductUseCase updateProductUseCase;
+    private UpdateProductUseCaseImpl updateProductUseCase;
 
     @Mock
-    private DeleteProductByIdUseCase deleteProductByIdUseCase;
+    private DeleteProductByIdUseCaseImpl deleteProductByIdUseCase;
 
-    @Mock
-    private ProductMapper productMapper;
-
-    private ProductRequestDTO requestDTO;
-
-    private ProductResponseDTO responseDTO;
+    private ProductDTO requestDTO;
 
     private Product product;
+
+    private ProductDTO responseDTO;
 
     @InjectMocks
     private ProductController productController;
@@ -54,70 +51,50 @@ public class ProductControllerTest {
     void setUp(){
         MockitoAnnotations.openMocks(this);
 
-        requestDTO = new ProductRequestDTO("Produto Exemplo", 42,
-                42.2, 42.2, 42, 42.22);
+        requestDTO = ProductDTOMock.mockRequest();
 
-        product = new Product(1L, "Produto Exemplo", 42, 42.2,
-                42.2, 42, 42.22, LocalDateTime.now(), LocalDateTime.now());
+        product = ProductMock.mock();
 
-        responseDTO = new ProductResponseDTO();
-        responseDTO.setId(1L);
-        responseDTO.setQuantity(42);
-        responseDTO.setPurchasePrice(42.2);
-        responseDTO.setSalePrice(42.2);
-        responseDTO.setMinimumStock(42);
-        responseDTO.setLastPurchasePrice(42.22);
-        responseDTO.setCreatedAt(LocalDateTime.now());
-        responseDTO.setUpdatedAt(LocalDateTime.now());
+        responseDTO = ProductDTOMock.mockResponse();
     }
 
     @Test
     void shouldCreateProductSuccessfully(){
         when(createProductUseCase.execute(any(Product.class))).thenReturn(product);
-        when(productMapper.toDomain(any(ProductRequestDTO.class))).thenReturn(product);
-        when(productMapper.toResponse(any(Product.class))).thenReturn(responseDTO);
 
-        ProductResponseDTO result = productController.createProduct(requestDTO);
+        ProductDTO result = productController.createProduct(requestDTO);
 
-        assertNotNull(result);
-        assertEquals(responseDTO.getId(), result.getId());
-        assertEquals(responseDTO.getDescription(), result.getDescription());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(responseDTO.getId(), result.getId());
+        Assertions.assertEquals(responseDTO.getDescription(), result.getDescription());
 
         verify(createProductUseCase).execute(any(Product.class));
-        verify(productMapper).toDomain(any(ProductRequestDTO.class));
-        verify(productMapper).toResponse(any(Product.class));
     }
 
     @Test
     void shouldUpdateProductSuccessfully(){
         when(updateProductUseCase.execute(anyLong(), any(Product.class))).thenReturn(product);
-        when(productMapper.toDomain(any(ProductRequestDTO.class))).thenReturn(product);
-        when(productMapper.toResponse(any(Product.class))).thenReturn(responseDTO);
 
-        ProductResponseDTO result = productController.editProduct(1L, requestDTO);
+        ProductDTO result = productController.editProduct(1L, requestDTO);
 
-        assertNotNull(result);
-        assertEquals(responseDTO.getId(), result.getId());
-        assertEquals(responseDTO.getDescription(), result.getDescription());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(responseDTO.getId(), result.getId());
+        Assertions.assertEquals(responseDTO.getDescription(), result.getDescription());
 
         verify(updateProductUseCase).execute(anyLong(), any(Product.class));
-        verify(productMapper).toDomain(any(ProductRequestDTO.class));
-        verify(productMapper).toResponse(any(Product.class));
     }
 
     @Test
     void shouldFindProductSuccessfully(){
-        when(findProductUseCase.execute()).thenReturn(Collections.singletonList(product));
-        when(productMapper.toResponse(any(Product.class))).thenReturn(responseDTO);
+        when(findProductUseCase.execute()).thenReturn(Collections.singleton(product));
 
-        List<ProductResponseDTO> result = productController.findProducts();
+        List<ProductDTO> result = productController.findProducts();
 
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
+        Assertions.assertNotNull(result);
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertEquals(1, result.size());
 
         verify(findProductUseCase).execute();
-        verify(productMapper).toResponse(any(Product.class));
     }
 
     @Test
