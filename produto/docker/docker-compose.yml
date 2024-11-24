@@ -1,23 +1,28 @@
 version: '3.8'
-
 services:
-  postgres:
-    image: postgres:latest
-    container_name: postgres_db-fiap
+  db:
+    image: postgres:14
     environment:
-      POSTGRES_DB: products_db
-      POSTGRES_USER: fiap_tech
-      POSTGRES_PASSWORD: 102030
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: fase4
     ports:
-      - "5433:5432"
+      - "5432:5432"
+  localstack:
+    container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
+    image: localstack/localstack
+    ports:
+      - "127.0.0.1:4566:4566" # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559" # external services port range
+      - "127.0.0.1:53:53" # DNS config (only required for Pro)
+      - "127.0.0.1:53:53/udp" # DNS config (only required for Pro)
+      - "127.0.0.1:443:443" # LocalStack HTTPS Gateway (only required for Pro)
+    environment:
+      - DEBUG=${DEBUG-}
+      - PERSISTENCE=${PERSISTENCE-}
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR-}
+      # - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY-} # only required for Pro
+      - DOCKER_HOST=unix:///var/run/docker.sock
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - app-network
-
-volumes:
-  postgres_data:
-
-networks:
-  app-network:
-    driver: bridge
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
