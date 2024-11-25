@@ -1,10 +1,9 @@
 package com.fiap.tech.produto.useCase;
 
-import com.fiap.tech.produto.domain.mappers.ProductMapper;
-import com.fiap.tech.produto.domain.model.Product;
-import com.fiap.tech.produto.domain.useCase.FindProductUseCase;
-import com.fiap.tech.produto.infra.entity.ProductEntity;
-import com.fiap.tech.produto.infra.repository.ProductRepository;
+import com.fiap.tech.produto.core.repository.ProductRepository;
+import com.fiap.tech.produto.domain.product.Product;
+import com.fiap.tech.produto.product.useCase.FindProductUseCaseImpl;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -12,24 +11,19 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class FindProductUseCaseTest {
 
     @Mock
     private ProductRepository productRepository;
 
-    @Mock
-    private ProductMapper productMapper;
-
     @InjectMocks
-    private FindProductUseCase findProductUseCase;
-
-    private ProductEntity productEntity;
+    private FindProductUseCaseImpl findProductUseCase;
 
     private Product product;
 
@@ -38,15 +32,6 @@ class FindProductUseCaseTest {
         MockitoAnnotations.openMocks(this);
 
         product = Product.builder()
-                .description("Produto Exemplo1")
-                .quantity(42)
-                .purchasePrice(42.2)
-                .salePrice(42.2)
-                .minimumStock(42)
-                .lastPurchasePrice(42.22)
-                .build();
-
-        productEntity = ProductEntity.builder()
                 .id(1L)
                 .description("Produto Exemplo1")
                 .quantity(42)
@@ -59,26 +44,23 @@ class FindProductUseCaseTest {
 
     @Test
     void shouldFindProductsSuccessfully(){
-        when(productRepository.findAll()).thenReturn(List.of(productEntity));
-        when(productMapper.toDomain(any(ProductEntity.class))).thenReturn(product);
+        when(productRepository.findAll()).thenReturn(Set.of(product));
 
-        List<Product> result = findProductUseCase.execute();
+        Set<Product> result = findProductUseCase.execute();
 
-        assertEquals(1, result.size());
-        assertEquals(product.getId(), result.get(0).getId());
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(product.getId(), result.stream().findFirst().get().getId());
         verify(productRepository, times(1)).findAll();
-        verify(productMapper).toDomain(productEntity);
     }
 
     @Test
     void shouldReturnEmptyListWhenNoProductFound(){
-        when(productRepository.findAll()).thenReturn(Collections.emptyList());
+        when(productRepository.findAll()).thenReturn(Collections.emptySet());
 
-        List<Product> result = findProductUseCase.execute();
+        Set<Product> result = findProductUseCase.execute();
 
-        assertEquals(0, result.size());
+        Assertions.assertEquals(0, result.size());
         verify(productRepository, times(1)).findAll();
-        verify(productMapper, never()).toDomain(any(ProductEntity.class));
     }
     
 }
