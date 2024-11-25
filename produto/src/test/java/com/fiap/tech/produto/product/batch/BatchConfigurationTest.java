@@ -1,85 +1,54 @@
 package com.fiap.tech.produto.product.batch;
 
 import com.fiap.tech.produto.repository.model.ProductEntity;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.batch.core.Step;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.item.Chunk;
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.test.JobLauncherTestUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.batch.item.ExecutionContext;
+import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class BatchConfigurationTest {
 
     @Mock
-    private DataSource dataSource;
+    private FlatFileItemReader<ProductEntity> mockReader;
 
     @InjectMocks
     private BatchConfiguration batchConfiguration;
 
-    @Autowired
-    private JobLauncherTestUtils jobLauncherTestUtils;
-
-    @Autowired
-    private JobRepository jobRepository;
-
-    @Mock
-    private ItemReader<ProductEntity> mockReader;
-
-    @Mock
-    private ItemProcessor<ProductEntity, ProductEntity> mockProcessor;
-
-    @Mock
-    private ItemWriter<ProductEntity> mockWriter;
-
-    @Mock
-    private Step mockStep;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
-
-    @Test
-    void testStepConfiguration() {
-        Step step = batchConfiguration.step(
-                mock(JobRepository.class),
-                mock(PlatformTransactionManager.class),
-                mockReader,
-                mockProcessor,
-                mockWriter
-        );
-        assertThat(step).isNotNull();
-        assertThat(step.getName()).isEqualTo("step");
-    }
-
     @Test
     void testItemReader() throws Exception {
-        ItemReader<ProductEntity> reader = batchConfiguration.itemReader();
+        String fileName = "test-file.csv";
+
+        StepExecution stepExecution = new StepExecution("step", new JobExecution(1L));
+        ExecutionContext executionContext = new ExecutionContext();
+        stepExecution.setExecutionContext(executionContext);
+
+        FlatFileItemReader<ProductEntity> reader = batchConfiguration.itemReader(fileName);
         assertThat(reader).isNotNull();
 
         ProductEntity product = new ProductEntity(
                 1L, "Produto A", 10, 20.5, 30.0, 5, 20.5, null, null);
-        when(mockReader.read()).thenReturn(product, null);
+
+        when(mockReader.read()).thenReturn(product, (ProductEntity) null);
+
+        assertThat(mockReader).isNotNull();
 
         ProductEntity firstRead = mockReader.read();
         ProductEntity secondRead = mockReader.read();
@@ -90,34 +59,37 @@ class BatchConfigurationTest {
     }
 
     @Test
-    void testItemProcessor() throws Exception {
-        ItemProcessor<ProductEntity, ProductEntity> processor = batchConfiguration.itemProcessor();
-        assertThat(processor).isNotNull();
+    void testItemProcessor() {
+        ProductItemProcessor processor = new ProductItemProcessor();
+        ProductEntity validProduct = new ProductEntity(
+                1L, "Product A", 10, 20.5, 30.0, 5, 20.5, null, null);
 
-        ProductEntity product = new ProductEntity(
-                1L, "Produto A", 10, 20.5, 30.0, 5, 20.5, null, null);
-        ProductEntity processedProduct = processor.process(product);
+        ProductEntity processedValidProduct = processor.process(validProduct);
 
-        assertThat(processedProduct).isEqualTo(product);
+        assertThat(processedValidProduct).isNotNull()
+                .isEqualTo(validProduct);
     }
 
     @Test
-    void testItemWriter() throws Exception {
-        ItemWriter<ProductEntity> writer = batchConfiguration.itemWriter(dataSource);
-        assertThat(writer).isNotNull();
+    void testCompleteJobFlow() {
+        JobRepository jobRepository = mock(JobRepository.class);
+        PlatformTransactionManager transactionManager = mock(PlatformTransactionManager.class);
+        DataSource dataSource = mock(DataSource.class);
 
-        List<ProductEntity> products = Arrays.asList(
-                new ProductEntity(1L, "Produto A", 10, 20.5, 30.0, 5, 20.5, null, null),
-                new ProductEntity(2L, "Produto B", 15, 25.0, 35.0, 7, 25.0, null, null)
+        ReflectionTestUtils.setField(batchConfiguration, "jobRepository", jobRepository);
+        ReflectionTestUtils.setField(
+                batchConfiguration, "platformTransactionManager", transactionManager);
+
+        Job job = batchConfiguration.updateProductJob(
+                batchConfiguration.step(
+                        batchConfiguration.itemReader("test.csv"),
+                        batchConfiguration.itemProcessor(),
+                        batchConfiguration.itemWriter(dataSource)
+                )
         );
 
-        Chunk<ProductEntity> productChunk = new Chunk<>(products);
-
-        doNothing().when(mockWriter).write(productChunk);
-
-        mockWriter.write(productChunk);
-
-        verify(mockWriter, times(1)).write(productChunk);
+        assertThat(job).isNotNull();
+        assertThat(job.getName()).isEqualTo("updateProductJob");
     }
 
 }

@@ -5,6 +5,7 @@ import com.fiap.tech.produto.core.useCase.DeleteProductByIdUseCase;
 import com.fiap.tech.produto.core.useCase.FindProductByIdUseCase;
 import com.fiap.tech.produto.core.useCase.FindProductUseCase;
 import com.fiap.tech.produto.core.useCase.UpdateProductUseCase;
+import com.fiap.tech.produto.core.useCase.UpdateProductsUseCase;
 import com.fiap.tech.produto.product.adapter.ProductAdapter;
 import com.fiap.tech.produto.product.dto.ProductDTO;
 import jakarta.validation.Valid;
@@ -17,8 +18,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -38,6 +41,8 @@ public class ProductController {
     private final ProductAdapter productAdapter = ProductAdapter.INSTANCE;
 
     private final UpdateProductUseCase updateProductUseCase;
+
+    private final UpdateProductsUseCase updateProductsUseCase;
 
 
     @PostMapping("/product")
@@ -71,6 +76,14 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     public void deleteProduct(@PathVariable Long id) {
         deleteProductByIdUseCase.execute(id);
+    }
+
+    @PutMapping("/product/batch")
+    @ResponseStatus(HttpStatus.OK)
+    public void editProducts(
+            @RequestParam(name = "file") final MultipartFile file
+    ) {
+        updateProductsUseCase.execute(file);
     }
 
 }
