@@ -1,5 +1,7 @@
 package com.fiap.tech.produto.product.queue;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fiap.tech.produto.core.useCase.FindProductByIdUseCase;
 import com.fiap.tech.produto.core.useCase.UpdateProductUseCase;
 import com.fiap.tech.produto.domain.product.Product;
@@ -16,17 +18,27 @@ public class StorageQueueConsumer {
 
     private final FindProductByIdUseCase findProductByIdUseCase;
 
+    private final ObjectMapper objectMapper;
+
     @SqsListener("${queue.product.name}")
-    public void updateStorage(ProductQuantityChangeDTO productQuantityChangeDTO) {
-        Product product = findProductByIdUseCase.execute(productQuantityChangeDTO.getProductId());
+    public void updateStorage(String dto) {
+        try {
+            ProductQuantityChangeDTO productQuantityChangeDTO = objectMapper.readValue(
+                    dto, ProductQuantityChangeDTO.class);
 
-        if (productQuantityChangeDTO.getCancelled()) {
-            product.setQuantity(product.getQuantity() + productQuantityChangeDTO.getQuantity());
-        } else {
-            product.setQuantity(product.getQuantity() - productQuantityChangeDTO.getQuantity());
+            Product product = findProductByIdUseCase.execute(
+                    productQuantityChangeDTO.getProductId());
+
+            if (productQuantityChangeDTO.getCancelled()) {
+                product.setQuantity(product.getQuantity() + productQuantityChangeDTO.getQuantity());
+            } else {
+                product.setQuantity(product.getQuantity() - productQuantityChangeDTO.getQuantity());
+            }
+
+            updateProductUseCase.execute(product.getId(), product);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
-
-        updateProductUseCase.execute(product.getId(), product);
     }
 
 }
