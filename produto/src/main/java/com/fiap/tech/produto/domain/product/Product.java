@@ -28,8 +28,6 @@ public class Product {
 
     private Integer minimumStock;
 
-    private Double lastPurchasePrice;
-
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

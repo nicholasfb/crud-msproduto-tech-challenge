@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 @Builder
 public class ProductDTO {
 
+    private Long id;
+
     @NotNull
     public String description;
 
@@ -29,11 +31,6 @@ public class ProductDTO {
 
     @NotNull
     public Integer minimumStock;
-
-    @NotNull
-    public Double lastPurchasePrice;
-
-    private Long id;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private LocalDateTime createdAt;

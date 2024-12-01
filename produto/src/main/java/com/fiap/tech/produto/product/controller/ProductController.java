@@ -1,7 +1,6 @@
 package com.fiap.tech.produto.product.controller;
 
 import com.fiap.tech.produto.core.useCase.CreateProductUseCase;
-import com.fiap.tech.produto.core.useCase.DeleteProductByIdUseCase;
 import com.fiap.tech.produto.core.useCase.FindProductByIdUseCase;
 import com.fiap.tech.produto.core.useCase.FindProductUseCase;
 import com.fiap.tech.produto.core.useCase.UpdateProductUseCase;
@@ -11,7 +10,7 @@ import com.fiap.tech.produto.product.dto.ProductDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,8 +35,6 @@ public class ProductController {
 
     private final FindProductByIdUseCase findProductByIdUseCase;
 
-    private final DeleteProductByIdUseCase deleteProductByIdUseCase;
-
     private final ProductAdapter productAdapter = ProductAdapter.INSTANCE;
 
     private final UpdateProductUseCase updateProductUseCase;
@@ -45,26 +42,26 @@ public class ProductController {
     private final UpdateProductsUseCase updateProductsUseCase;
 
 
-    @PostMapping("/product")
+    @PostMapping("api/product")
     @ResponseStatus(HttpStatus.CREATED)
     public ProductDTO createProduct(@Valid @RequestBody ProductDTO requestDTO) {
         return productAdapter.fromDomain(createProductUseCase.execute(
                 productAdapter.toDomain(requestDTO)));
     }
 
-    @GetMapping("/product")
+    @GetMapping("api/product")
     @ResponseStatus(HttpStatus.OK)
     public List<ProductDTO> findProducts() {
         return findProductUseCase.execute().stream().map(productAdapter::fromDomain).toList();
     }
 
-    @GetMapping("/product/{id}")
+    @GetMapping("api/product/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ProductDTO findProductById(@PathVariable Long id) {
         return productAdapter.fromDomain(findProductByIdUseCase.execute(id));
     }
 
-    @PutMapping("/product/{id}")
+    @PutMapping("api/product/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ProductDTO editProduct(@PathVariable Long id, @Valid @RequestBody
     ProductDTO requestDTO) {
@@ -72,13 +69,7 @@ public class ProductController {
                 updateProductUseCase.execute(id, productAdapter.toDomain(requestDTO)));
     }
 
-    @DeleteMapping("/product/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteProduct(@PathVariable Long id) {
-        deleteProductByIdUseCase.execute(id);
-    }
-
-    @PutMapping("/product/batch")
+    @PutMapping(value = "api/product/batch", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public void editProducts(
             @RequestParam(name = "file") final MultipartFile file

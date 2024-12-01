@@ -39,7 +39,6 @@ class FindProductByIdUseCaseTest {
                 .purchasePrice(42.2)
                 .salePrice(42.2)
                 .minimumStock(42)
-                .lastPurchasePrice(42.22)
                 .build();
     }
 

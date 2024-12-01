@@ -11,8 +11,8 @@ public interface ProductRepository {
 
     Product save(Product product);
 
-    Set<Product> findAll();
+    Product update(Product product);
 
-    void delete(Long id);
+    Set<Product> findAll();
 
 }

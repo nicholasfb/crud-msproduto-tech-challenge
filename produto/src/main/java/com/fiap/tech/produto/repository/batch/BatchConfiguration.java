@@ -1,10 +1,9 @@
-package com.fiap.tech.produto.product.batch;
+package com.fiap.tech.produto.repository.batch;
 
 import com.fiap.tech.produto.repository.model.ProductEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
@@ -27,13 +26,12 @@ import org.springframework.transaction.PlatformTransactionManager;
 import javax.sql.DataSource;
 
 @Configuration
-@EnableBatchProcessing
 @RequiredArgsConstructor
 public class BatchConfiguration {
 
     private final JobRepository jobRepository;
 
-    private final PlatformTransactionManager platformTransactionManager;
+    private final PlatformTransactionManager transactionManager;
 
     @Bean
     public Job updateProductJob(Step step) {
@@ -49,7 +47,7 @@ public class BatchConfiguration {
                      ItemProcessor<ProductEntity, ProductEntity> itemProcessor,
                      ItemWriter<ProductEntity> itemWriter) {
         return new StepBuilder("step", jobRepository)
-                .<ProductEntity, ProductEntity>chunk(100, platformTransactionManager)
+                .<ProductEntity, ProductEntity>chunk(100, transactionManager)
                 .reader(itemReader)
                 .processor(itemProcessor)
                 .writer(itemWriter)
@@ -81,14 +79,15 @@ public class BatchConfiguration {
         return new JdbcBatchItemWriterBuilder<ProductEntity>()
                 .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
                 .dataSource(dataSource)
-                .sql("UPDATE products SET " +
+                .sql("INSERT INTO product_entity (id, description, quantity, purchase_price, sale_price, minimum_stock, created_at, updated_at)" +
+                             "VALUES (:id, :description, :quantity, :purchasePrice, :salePrice, :minimumStock, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) " +
+                             "ON CONFLICT ON CONSTRAINT product_entity_pkey DO UPDATE SET " +
                              "description = :description, " +
                              "quantity = :quantity, " +
                              "purchase_price = :purchasePrice, " +
                              "sale_price = :salePrice, " +
                              "minimum_stock = :minimumStock, " +
-                             "updated_at = CURRENT_TIMESTAMP " +
-                             "WHERE id = :id")
+                             "updated_at = CURRENT_TIMESTAMP")
                 .beanMapped()
                 .build();
     }

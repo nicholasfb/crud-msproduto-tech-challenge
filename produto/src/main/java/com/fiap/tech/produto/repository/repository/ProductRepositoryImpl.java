@@ -1,6 +1,6 @@
 package com.fiap.tech.produto.repository.repository;
 
-import com.fiap.tech.produto.core.exception.UnprocessableEntityException;
+import com.fiap.tech.produto.core.exception.ResourceNotFoundException;
 import com.fiap.tech.produto.core.repository.ProductRepository;
 import com.fiap.tech.produto.domain.product.Product;
 import com.fiap.tech.produto.repository.adapter.ProductAdapter;
@@ -39,18 +39,22 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public Set<Product> findAll() {
-        return productJpaRepository.findAll().stream().map(productAdapter::fromEntity).collect(
-                Collectors.toSet());
+    public Product update(final Product product) {
+        return productAdapter.fromEntity(
+                productJpaRepository.save(
+                        productAdapter.update(
+                                productJpaRepository.findById(product.getId()).orElseThrow(
+                                        () -> new ResourceNotFoundException("Pedido não encontrado")),
+                                product
+                        )
+                )
+        );
     }
 
     @Override
-    public void delete(final Long id) {
-        productJpaRepository.delete(
-                productJpaRepository.findById(id)
-                        .orElseThrow(
-                                () -> new UnprocessableEntityException("Produto não encontrado"))
-        );
+    public Set<Product> findAll() {
+        return productJpaRepository.findAll().stream().map(productAdapter::fromEntity).collect(
+                Collectors.toSet());
     }
 
 }

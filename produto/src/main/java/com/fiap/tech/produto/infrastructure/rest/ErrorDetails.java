@@ -1,5 +1,6 @@
 package com.fiap.tech.produto.infrastructure.rest;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ErrorDetails {
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private LocalDateTime timestamp;
 
     private int status;

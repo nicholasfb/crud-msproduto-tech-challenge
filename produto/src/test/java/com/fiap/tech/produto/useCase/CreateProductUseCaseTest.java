@@ -36,7 +36,6 @@ class CreateProductUseCaseTest {
                 .purchasePrice(42.2)
                 .salePrice(42.2)
                 .minimumStock(42)
-                .lastPurchasePrice(42.22)
                 .build();
 
     }
@@ -54,8 +53,6 @@ class CreateProductUseCaseTest {
         Assertions.assertEquals(product.getPurchasePrice(), result.getPurchasePrice());
         Assertions.assertEquals(product.getSalePrice(), result.getSalePrice());
         Assertions.assertEquals(product.getMinimumStock(), result.getMinimumStock());
-        Assertions.assertEquals(product.getLastPurchasePrice(), result.getLastPurchasePrice());
-
 
         verify(productRepository, times(1)).save(product);
     }

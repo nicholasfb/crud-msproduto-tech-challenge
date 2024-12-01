@@ -6,7 +6,6 @@ import com.fiap.tech.produto.mock.ProductMock;
 import com.fiap.tech.produto.product.controller.ProductController;
 import com.fiap.tech.produto.product.dto.ProductDTO;
 import com.fiap.tech.produto.product.useCase.CreateProductUseCaseImpl;
-import com.fiap.tech.produto.product.useCase.DeleteProductByIdUseCaseImpl;
 import com.fiap.tech.produto.product.useCase.FindProductUseCaseImpl;
 import com.fiap.tech.produto.product.useCase.UpdateProductUseCaseImpl;
 import org.junit.jupiter.api.Assertions;
@@ -34,9 +33,6 @@ public class ProductControllerTest {
 
     @Mock
     private UpdateProductUseCaseImpl updateProductUseCase;
-
-    @Mock
-    private DeleteProductByIdUseCaseImpl deleteProductByIdUseCase;
 
     private ProductDTO requestDTO;
 
@@ -95,12 +91,6 @@ public class ProductControllerTest {
         Assertions.assertEquals(1, result.size());
 
         verify(findProductUseCase).execute();
-    }
-
-    @Test
-    void shouldDeleteProductSuccessfully() {
-        productController.deleteProduct(1L);
-        verify(deleteProductByIdUseCase).execute(anyLong());
     }
 
 }

@@ -7,7 +7,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,31 +23,28 @@ public class ProductEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, updatable = false)
+    @Column
     private Long id;
 
-    @Column(name = "description", nullable = false)
+    @Column
     private String description;
 
-    @Column(name = "quantity", nullable = false)
+    @Column
     private Integer quantity;
 
-    @Column(name = "purchasePrice", nullable = false)
+    @Column
     private Double purchasePrice;
 
-    @Column(name = "salePrice", nullable = false)
+    @Column
     private Double salePrice;
 
-    @Column(name = "minimumStock", nullable = false)
+    @Column
     private Integer minimumStock;
 
-    @Column(name = "lastPurchasePrice", nullable = false)
-    private Double lastPurchasePrice;
-
-    @Column(name = "createdAt", nullable = false, updatable = false)
+    @Column
     private LocalDateTime createdAt;
 
-    @Column(name = "updatedAt", nullable = false)
+    @Column
     private LocalDateTime updatedAt;
 
     @PrePersist

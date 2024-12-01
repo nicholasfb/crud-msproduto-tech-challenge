@@ -1,5 +1,7 @@
 package com.fiap.tech.produto.product.batch;
 
+import com.fiap.tech.produto.repository.batch.BatchConfiguration;
+import com.fiap.tech.produto.repository.batch.ProductItemProcessor;
 import com.fiap.tech.produto.repository.model.ProductEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,7 +46,7 @@ class BatchConfigurationTest {
         assertThat(reader).isNotNull();
 
         ProductEntity product = new ProductEntity(
-                1L, "Produto A", 10, 20.5, 30.0, 5, 20.5, null, null);
+                1L, "Produto A", 10, 20.5, 30.0, 5, null, null);
 
         when(mockReader.read()).thenReturn(product, (ProductEntity) null);
 
@@ -62,7 +64,7 @@ class BatchConfigurationTest {
     void testItemProcessor() {
         ProductItemProcessor processor = new ProductItemProcessor();
         ProductEntity validProduct = new ProductEntity(
-                1L, "Product A", 10, 20.5, 30.0, 5, 20.5, null, null);
+                1L, "Product A", 10, 20.5, 30.0, 5, null, null);
 
         ProductEntity processedValidProduct = processor.process(validProduct);
 

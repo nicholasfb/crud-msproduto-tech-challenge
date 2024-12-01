@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class StorageDTO {
+public class ProductQuantityChangeDTO {
 
     private Long productId;
 
