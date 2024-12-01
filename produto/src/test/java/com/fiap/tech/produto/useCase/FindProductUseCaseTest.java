@@ -28,7 +28,7 @@ class FindProductUseCaseTest {
     private Product product;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         MockitoAnnotations.openMocks(this);
 
         product = Product.builder()
@@ -43,7 +43,7 @@ class FindProductUseCaseTest {
     }
 
     @Test
-    void shouldFindProductsSuccessfully(){
+    void shouldFindProductsSuccessfully() {
         when(productRepository.findAll()).thenReturn(Set.of(product));
 
         Set<Product> result = findProductUseCase.execute();
@@ -54,7 +54,7 @@ class FindProductUseCaseTest {
     }
 
     @Test
-    void shouldReturnEmptyListWhenNoProductFound(){
+    void shouldReturnEmptyListWhenNoProductFound() {
         when(productRepository.findAll()).thenReturn(Collections.emptySet());
 
         Set<Product> result = findProductUseCase.execute();
@@ -62,5 +62,5 @@ class FindProductUseCaseTest {
         Assertions.assertEquals(0, result.size());
         verify(productRepository, times(1)).findAll();
     }
-    
+
 }

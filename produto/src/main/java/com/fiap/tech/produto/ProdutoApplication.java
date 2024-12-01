@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories(basePackages = {"com.fiap.tech.produto.repository.jpa"})
 public class ProdutoApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ProdutoApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ProdutoApplication.class, args);
+    }
 
 }

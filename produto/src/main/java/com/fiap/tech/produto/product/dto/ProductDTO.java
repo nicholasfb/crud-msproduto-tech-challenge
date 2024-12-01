@@ -15,30 +15,30 @@ import java.time.LocalDateTime;
 @Builder
 public class ProductDTO {
 
-	private Long id;
+    @NotNull
+    public String description;
 
-	@NotNull
-	public String description;
+    @NotNull
+    public Integer quantity;
 
-	@NotNull
-	public Integer quantity;
+    @NotNull
+    public Double purchasePrice;
 
-	@NotNull
-	public Double purchasePrice;
+    @NotNull
+    public Double salePrice;
 
-	@NotNull
-	public Double salePrice;
+    @NotNull
+    public Integer minimumStock;
 
-	@NotNull
-	public Integer minimumStock;
+    @NotNull
+    public Double lastPurchasePrice;
 
-	@NotNull
-	public Double lastPurchasePrice;
+    private Long id;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING)
-	private LocalDateTime createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private LocalDateTime createdAt;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING)
-	private LocalDateTime updatedAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private LocalDateTime updatedAt;
 
 }

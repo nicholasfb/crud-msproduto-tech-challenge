@@ -48,7 +48,7 @@ public class ProductControllerTest {
     private ProductController productController;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         MockitoAnnotations.openMocks(this);
 
         requestDTO = ProductDTOMock.mockRequest();
@@ -59,7 +59,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    void shouldCreateProductSuccessfully(){
+    void shouldCreateProductSuccessfully() {
         when(createProductUseCase.execute(any(Product.class))).thenReturn(product);
 
         ProductDTO result = productController.createProduct(requestDTO);
@@ -72,7 +72,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    void shouldUpdateProductSuccessfully(){
+    void shouldUpdateProductSuccessfully() {
         when(updateProductUseCase.execute(anyLong(), any(Product.class))).thenReturn(product);
 
         ProductDTO result = productController.editProduct(1L, requestDTO);
@@ -85,7 +85,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    void shouldFindProductSuccessfully(){
+    void shouldFindProductSuccessfully() {
         when(findProductUseCase.execute()).thenReturn(Collections.singleton(product));
 
         List<ProductDTO> result = productController.findProducts();
@@ -98,8 +98,9 @@ public class ProductControllerTest {
     }
 
     @Test
-    void shouldDeleteProductSuccessfully(){
+    void shouldDeleteProductSuccessfully() {
         productController.deleteProduct(1L);
         verify(deleteProductByIdUseCase).execute(anyLong());
     }
+
 }

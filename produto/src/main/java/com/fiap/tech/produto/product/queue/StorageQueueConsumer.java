@@ -16,7 +16,7 @@ public class StorageQueueConsumer {
 
     private final FindProductByIdUseCase findProductByIdUseCase;
 
-    @SqsListener("${queue.estoque.name}")
+    @SqsListener("${queue.product.name}")
     public void updateStorage(StorageDTO storageDTO) {
         Product product = findProductByIdUseCase.execute(storageDTO.getProductId());
 

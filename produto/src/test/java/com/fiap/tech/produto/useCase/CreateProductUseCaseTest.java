@@ -59,4 +59,5 @@ class CreateProductUseCaseTest {
 
         verify(productRepository, times(1)).save(product);
     }
+
 }

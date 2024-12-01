@@ -17,4 +17,5 @@ public interface ProductAdapter {
     Product toDomain(ProductDTO dto);
 
     ProductDTO fromDomain(Product product);
+
 }

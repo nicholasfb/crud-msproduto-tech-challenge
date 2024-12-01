@@ -75,21 +75,22 @@ class UpdateProductUseCaseTest {
         when(productRepository.findById(1L)).thenReturn(Optional.of(existingProduct));
         when(productRepository.save(any(Product.class))).thenReturn(updatedProduct);
 
-    Product result = updateProductUseCase.execute(1L, updatedProductDomain);
+        Product result = updateProductUseCase.execute(1L, updatedProductDomain);
 
         Assertions.assertEquals(updatedProductDomain.getId(), result.getId());
 
-    verify(productRepository, times(1)).findById(1L);
+        verify(productRepository, times(1)).findById(1L);
         verify(productRepository, times(1)).save(any(Product.class));
     }
 
     @Test
-    void shouldThrowExceptionWhenProductIdNotFound(){
+    void shouldThrowExceptionWhenProductIdNotFound() {
         when(productRepository.findById(1L)).thenReturn(Optional.empty());
 
         UnprocessableEntityException exception = assertThrows(
                 UnprocessableEntityException.class,
-                () -> updateProductUseCase.execute(1L, updatedProductDomain));
+                () -> updateProductUseCase.execute(1L, updatedProductDomain)
+        );
 
         Assertions.assertEquals(
                 "Erro ao atualizar um produto. Produto não encontrado", exception.getMessage());
@@ -97,4 +98,5 @@ class UpdateProductUseCaseTest {
         verify(productRepository).findById(1L);
         verify(productRepository, never()).save(any(Product.class));
     }
+
 }

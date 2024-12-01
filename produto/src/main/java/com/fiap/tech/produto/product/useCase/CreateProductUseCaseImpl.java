@@ -10,10 +10,11 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class CreateProductUseCaseImpl implements CreateProductUseCase {
 
-	private ProductRepository productRepository;
+    private ProductRepository productRepository;
 
-	@Override
-	public Product execute(Product product) {
-		return productRepository.save(product);
-	}
+    @Override
+    public Product execute(Product product) {
+        return productRepository.save(product);
+    }
+
 }

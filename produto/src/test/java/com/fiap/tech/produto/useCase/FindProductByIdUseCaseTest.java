@@ -44,7 +44,7 @@ class FindProductByIdUseCaseTest {
     }
 
     @Test
-    void shouldFindProductWithValidId(){
+    void shouldFindProductWithValidId() {
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
 
         Product result = findProductByIdUseCase.execute(1L);
@@ -55,12 +55,15 @@ class FindProductByIdUseCaseTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenFindProductWithInvalidId(){
+    void shouldThrowExceptionWhenFindProductWithInvalidId() {
         when(productRepository.findById(1L)).thenReturn(Optional.empty());
 
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
-                () -> findProductByIdUseCase.execute(1L));
+        ResourceNotFoundException exception = assertThrows(
+                ResourceNotFoundException.class,
+                () -> findProductByIdUseCase.execute(1L)
+        );
 
         Assertions.assertEquals("Produto não encontrado", exception.getMessage());
     }
+
 }

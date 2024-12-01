@@ -18,4 +18,5 @@ public class FindProductByIdUseCaseImpl implements FindProductByIdUseCase {
         return productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
     }
+
 }
