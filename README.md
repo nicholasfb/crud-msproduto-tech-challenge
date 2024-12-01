@@ -41,6 +41,10 @@ seguindo a seguinte estrutura:
 * preço de venda
 * estoque mínimo
 
+### Atualizar quantidade do item
+
+A quantidade do item é atualizado de forma automatica via comunicação SQS com o sistema de pedidos
+
 ## Inicializando localmente a API
 
 ### Docker
