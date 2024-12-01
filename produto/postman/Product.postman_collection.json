@@ -1,132 +1,148 @@
 {
-  "info": {
-    "_postman_id": "d5722363-6973-496e-9789-76287a1deb35",
-    "name": "Product",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "7521044",
-    "_collection_link": "https://dark-sunset-907085.postman.co/workspace/PosTech~fcc103fa-9367-4da2-9885-c9c6b1ebcc5d/collection/7521044-d5722363-6973-496e-9789-76287a1deb35?action=share&source=collection_link&creator=7521044"
-  },
-  "item": [
-    {
-      "name": "/api/product",
-      "request": {
-        "method": "POST",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"description\": \"produto 1\",\n  \"quantity\": 10,\n  \"purchasePrice\": 10,\n  \"salePrice\": 20,\n  \"minimumStock\": 5,\n  \"lastPurchasePrice\": 10\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "{{url-product}}/api/product",
-          "host": [
-            "{{url-product}}"
-          ],
-          "path": [
-            "api",
-            "product"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "/api/product",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{url-product}}/api/product",
-          "host": [
-            "{{url-product}}"
-          ],
-          "path": [
-            "api",
-            "product"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "/api/product/{id}}",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{url-product}}/api/product/{{productId}}",
-          "host": [
-            "{{url-product}}"
-          ],
-          "path": [
-            "api",
-            "product",
-            "{{productId}}"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "/api/product/{id}}",
-      "request": {
-        "method": "PUT",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"description\": \"produto 1a\",\n  \"quantity\": 10,\n  \"purchasePrice\": 10,\n  \"salePrice\": 20,\n  \"minimumStock\": 5,\n  \"lastPurchasePrice\": 10\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "{{url-product}}/api/product/{{productId}}",
-          "host": [
-            "{{url-product}}"
-          ],
-          "path": [
-            "api",
-            "product",
-            "{{productId}}"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "/api/product/batch",
-      "request": {
-        "method": "PUT",
-        "header": [],
-        "body": {
-          "mode": "formdata",
-          "formdata": [
-            {
-              "key": "file",
-              "type": "file",
-              "src": "/Users/felipecosta/IdeaProjects/crud-msproduto-tech-challenge/produto/src/main/resources/products.csv"
-            }
-          ]
-        },
-        "url": {
-          "raw": "{{url-product}}/api/product/batch",
-          "host": [
-            "{{url-product}}"
-          ],
-          "path": [
-            "api",
-            "product",
-            "batch"
-          ]
-        }
-      },
-      "response": []
-    }
-  ]
+	"info": {
+		"_postman_id": "d5722363-6973-496e-9789-76287a1deb35",
+		"name": "Product",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "7521044",
+		"_collection_link": "https://dark-sunset-907085.postman.co/workspace/PosTech~fcc103fa-9367-4da2-9885-c9c6b1ebcc5d/collection/7521044-d5722363-6973-496e-9789-76287a1deb35?action=share&source=collection_link&creator=7521044"
+	},
+	"item": [
+		{
+			"name": "/api/product",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"description\": \"produto 1\",\n  \"quantity\": 10,\n  \"purchasePrice\": 10,\n  \"salePrice\": 20,\n  \"minimumStock\": 5,\n  \"lastPurchasePrice\": 10\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/api/product",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"product"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/product",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8082/api/product",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"product"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/product/{id}}",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8082/api/product/:id",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"product",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/product/{id}}",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"description\": \"produto 1a\",\n  \"quantity\": 10,\n  \"purchasePrice\": 10,\n  \"salePrice\": 20,\n  \"minimumStock\": 5,\n  \"lastPurchasePrice\": 10\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/api/product/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"product",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/product/batch",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/Users/felipecosta/IdeaProjects/crud-msproduto-tech-challenge/produto/src/main/resources/products.csv"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8082/api/product/batch",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"product",
+						"batch"
+					]
+				}
+			},
+			"response": []
+		}
+	]
 }
